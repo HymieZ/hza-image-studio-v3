@@ -1,0 +1,8 @@
+{
+  "name": "hza-image-studio-v3",
+  "version": "3.0.0",
+  "dependencies": {
+    "@google/genai": "^1.0.0",
+    "@anthropic-ai/sdk": "^0.24.0"
+  }
+}
