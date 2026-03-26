@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HZA Image Studio V3</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080b;--surface:#111116;--s2:#1a1a21;--s3:#222230;
+  --bdr:#2a2a35;--bdr2:#e5a00d;
+  --tx:#ececf0;--tx2:#7c7c96;--tx3:#55556a;
+  --am:#e5a00d;--am1:rgba(229,160,13,.1);--am2:rgba(229,160,13,.2);
+  --grn:#2dd4a0;--red:#f0615e;--blu:#5b8def;--pur:#9b71ea;--r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+#gate.off{display:none}
+.gb{width:400px;padding:52px 40px;background:var(--surface);border:1px solid var(--bdr);border-radius:18px;text-align:center}
+.gl{width:60px;height:60px;background:var(--am);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:30px;color:var(--bg);margin-bottom:22px}
+.gb h2{font-size:21px;font-weight:700;margin-bottom:6px}
+.gb p{font-size:13px;color:var(--tx2);margin-bottom:28px}
+.vtag{display:inline-block;padding:3px 10px;background:var(--pur);color:#fff;border-radius:12px;font-size:10px;font-weight:700;font-family:'Space Mono',monospace;margin-left:6px;vertical-align:middle}
+.gi{width:100%;padding:14px 16px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--tx);font-family:inherit;font-size:14px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:2px}
+.gi:focus{border-color:var(--am)}
+.gbtn{width:100%;padding:14px;background:var(--am);color:var(--bg);border:none;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.gbtn:hover{filter:brightness(1.1)}
+.gerr{color:var(--red);font-size:12px;margin-top:10px;display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--bdr);background:var(--surface);display:none}
+.hl{display:flex;align-items:center;gap:12px}
+.hlogo{width:32px;height:32px;background:var(--am);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;font-size:16px;color:var(--bg)}
+.ht{font-size:15px;font-weight:700}
+.ht span{color:var(--tx2);font-weight:400;font-size:12px;margin-left:8px}
+.hr{display:flex;align-items:center;gap:10px}
+.hu{font-size:12px;color:var(--tx2);padding:5px 12px;border-radius:20px;background:var(--s2);border:1px solid var(--bdr)}
+.hb{font-family:'Space Mono',monospace;font-size:10px;padding:4px 10px;border-radius:16px;background:rgba(155,113,234,.15);color:var(--pur);border:1px solid rgba(155,113,234,.25)}
+.hd{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pu 2s ease infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* LAYOUT */
+.app{display:none;grid-template-columns:440px 1fr;min-height:calc(100vh - 57px)}
+.sb{border-right:1px solid var(--bdr);padding:22px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;max-height:calc(100vh - 57px)}
+.mn{padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;max-height:calc(100vh - 57px)}
+
+/* SECTION LABELS */
+.sl{font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.8px;color:var(--tx3);margin-bottom:6px}
+.sec{display:flex;flex-direction:column;gap:6px}
+
+/* INPUTS */
+.inp{width:100%;padding:11px 14px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--tx);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--am)}
+.inp::placeholder{color:var(--tx3)}
+.ss{width:100%;padding:11px 14px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--tx);font-family:inherit;font-size:13px;outline:none;transition:border-color .15s;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237c7c96'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.ss:focus{border-color:var(--am)}
+.ss option{background:var(--s2)}
+
+/* BENEFITS */
+.ben-row{display:flex;flex-direction:column;gap:6px}
+.ben-inp{display:flex;align-items:center;gap:8px}
+.ben-num{width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--am1);color:var(--am);font-family:'Space Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(229,160,13,.3)}
+
+/* CHIPS */
+.cw{display:flex;flex-wrap:wrap;gap:5px}
+.ch{padding:6px 13px;border-radius:18px;font-size:11px;border:1px solid var(--bdr);background:transparent;color:var(--tx2);cursor:pointer;transition:all .15s;font-family:inherit}
+.ch:hover,.ch.on{border-color:var(--am);color:var(--am);background:var(--am1)}
+
+/* RATIO BUTTONS */
+.arw{display:flex;gap:6px;flex-wrap:wrap}
+.arb{flex:1;min-width:50px;padding:9px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--s2);cursor:pointer;text-align:center;font-size:11px;color:var(--tx2);font-family:'Space Mono',monospace;transition:all .15s}
+.arb:hover{border-color:var(--tx2)}
+.arb.on{border-color:var(--am);color:var(--am);background:var(--am1)}
+
+/* UPLOAD ZONES */
+.uz{border:1px dashed var(--bdr);border-radius:var(--r);padding:14px;text-align:center;color:var(--tx2);font-size:12px;cursor:pointer;transition:all .15s}
+.uz:hover{border-color:var(--am);background:var(--am1)}
+.uz input{display:none}
+.uz-opt{border-color:rgba(91,141,239,.4);background:rgba(91,141,239,.04)}
+.uz-opt:hover{border-color:var(--blu);background:rgba(91,141,239,.1)}
+.upv{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.upt{width:52px;height:52px;border-radius:6px;object-fit:cover;border:1px solid var(--bdr)}
+.upw{position:relative;display:inline-block}
+.upx{position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+.opt-badge{display:inline-block;font-size:9px;color:var(--blu);border:1px solid rgba(91,141,239,.4);border-radius:8px;padding:1px 7px;font-family:'Space Mono',monospace;margin-left:6px;vertical-align:middle}
+.req-badge{display:inline-block;font-size:9px;color:var(--am);border:1px solid rgba(229,160,13,.3);border-radius:8px;padding:1px 7px;font-family:'Space Mono',monospace;margin-left:6px;vertical-align:middle}
+
+/* TEXTAREA */
+.pb{flex:1;min-height:60px;resize:vertical;width:100%;padding:12px 14px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--tx);font-family:inherit;font-size:13px;line-height:1.55;outline:none}
+.pb:focus{border-color:var(--am)}
+.pb::placeholder{color:var(--tx3)}
+
+/* VARIATIONS */
+.vc{display:flex;gap:6px;align-items:center}
+.vcb{width:40px;height:34px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--s2);cursor:pointer;text-align:center;font-size:13px;font-weight:700;color:var(--tx2);font-family:'Space Mono',monospace;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.vcb:hover{border-color:var(--tx2)}
+.vcb.on{border-color:var(--am);color:var(--am);background:var(--am1)}
+.vcl{font-size:11px;color:var(--tx3);margin-left:4px}
+
+/* GENERATE BUTTON */
+.genb{width:100%;padding:16px;border-radius:var(--r);background:var(--am);color:var(--bg);font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+.genb:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.genb:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.gsp{display:none;width:16px;height:16px;border:2px solid transparent;border-top-color:var(--bg);border-radius:50%;animation:sp .6s linear infinite}
+.genb.ld .gsp{display:block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* RIGHT PANEL */
+.mt{display:flex;align-items:center;justify-content:space-between}
+.mtl{font-size:13px;font-weight:700}
+.mbs{display:flex;gap:6px}
+.ib{width:34px;height:34px;border-radius:7px;border:1px solid var(--bdr);background:var(--s2);color:var(--tx2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .12s}
+.ib:hover{border-color:var(--am);color:var(--am)}
+
+/* GALLERY */
+.cv{flex:1;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--bdr);background:var(--surface);min-height:480px;position:relative;overflow:hidden}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;height:100%;padding:12px}
+.gal-item{position:relative;border-radius:10px;border:2px solid var(--bdr);background:var(--s2);overflow:hidden;cursor:pointer;transition:all .15s;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
+.gal-item:hover{border-color:var(--tx2)}
+.gal-item.selected{border-color:var(--am);box-shadow:0 0 20px rgba(229,160,13,.15)}
+.gal-item img{max-width:100%;max-height:100%;object-fit:contain}
+.gal-num{position:absolute;top:7px;left:7px;width:22px;height:22px;border-radius:5px;background:rgba(0,0,0,.7);color:var(--tx);font-family:'Space Mono',monospace;font-size:9px;display:flex;align-items:center;justify-content:center}
+.gal-dl{position:absolute;top:7px;right:7px;width:26px;height:26px;border-radius:5px;background:rgba(0,0,0,.7);color:var(--tx);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+.gal-item:hover .gal-dl{opacity:1}
+#mImg{max-width:100%;max-height:100%;border-radius:8px;display:none;animation:fu .35s ease}
+#mImg.v{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* EMPTY STATE */
+.es{text-align:center;color:var(--tx2);padding:44px 32px}
+.ei{font-size:42px;margin-bottom:12px;opacity:.2}
+.es h3{font-size:15px;font-weight:500;margin-bottom:6px;color:var(--tx)}
+.es p{font-size:12px;line-height:1.5;max-width:360px;margin:0 auto}
+.steps{text-align:left;margin:16px auto 0;max-width:300px}
+.step{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.step-num{width:22px;height:22px;min-width:22px;border-radius:50%;background:var(--am1);color:var(--am);font-family:'Space Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.step-text{font-size:12px;line-height:1.5;color:var(--tx2)}
+
+/* PROGRESS */
+.prg{position:absolute;inset:0;background:rgba(8,8,11,.9);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:10;border-radius:10px}
+.prg.on{display:flex}
+.prt{width:240px;height:3px;background:var(--bdr);border-radius:2px;overflow:hidden}
+.prf{height:100%;background:var(--am);border-radius:2px;width:0%;transition:width .3s ease}
+.prtx{font-family:'Space Mono',monospace;font-size:10px;color:var(--tx2)}
+.prg-sub{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);margin-top:2px}
+
+/* PROMPT DISPLAY */
+.prompt-box{background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;font-size:11px;color:var(--tx2);line-height:1.6;display:none}
+.prompt-box.show{display:block}
+.prompt-box strong{color:var(--am);font-size:9px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px}
+
+/* EDIT BAR */
+.eb{display:flex;gap:8px}
+.ebi{flex:1;padding:12px 14px;background:var(--s2);border:1px solid var(--bdr);border-radius:var(--r);color:var(--tx);font-family:inherit;font-size:13px;outline:none}
+.ebi:focus{border-color:var(--am)}
+.ebi::placeholder{color:var(--tx3)}
+.ebs{padding:12px 20px;background:var(--am);color:var(--bg);border:none;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.ebs:hover{filter:brightness(1.1)}
+.ebs:disabled{opacity:.45;cursor:not-allowed}
+
+/* HISTORY */
+.hs{display:flex;gap:8px;overflow-x:auto;padding:4px 0}
+.hs::-webkit-scrollbar{height:3px}
+.hs::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+.hi{width:60px;height:60px;min-width:60px;border-radius:7px;overflow:hidden;border:2px solid transparent;cursor:pointer;transition:all .12s}
+.hi:hover{transform:translateY(-2px)}
+.hi.on{border-color:var(--am)}
+.hi img{width:100%;height:100%;object-fit:cover}
+
+/* TOAST */
+.tst{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:var(--r);color:#fff;font-size:12px;font-weight:600;z-index:8000;display:none;animation:su .25s ease}
+.tst.on{display:block}
+.tst.err{background:var(--red)}
+.tst.ok{background:var(--grn)}
+.tst.inf{background:var(--blu)}
+@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* INFO BOX */
+.info-box{font-size:11px;color:var(--tx3);line-height:1.5;padding:8px 10px;background:var(--s2);border-radius:6px;border-left:2px solid var(--pur)}
+.info-box strong{color:var(--tx2)}
+
+/* DIVIDER */
+.div{border:none;border-top:1px solid var(--bdr);margin:0}
+
+@media(max-width:900px){.app{grid-template-columns:1fr}.sb{max-height:none;border-right:none;border-bottom:1px solid var(--bdr)}.mn{max-height:none}}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+<div class="gb">
+  <div class="gl">H</div>
+  <h2>HZA Image Studio <span class="vtag">V3</span></h2>
+  <p>Claude-powered prompt engine &bull; All 9 image types &bull; Infographic ready</p>
+  <input type="password" class="gi" id="gPass" placeholder="Password" autofocus onkeydown="if(event.key==='Enter')checkPass()">
+  <button class="gbtn" onclick="checkPass()">Enter Studio</button>
+  <div class="gerr" id="gErr">Incorrect password</div>
+</div>
+</div>
+
+<!-- HEADER -->
+<div class="hdr" id="hdr">
+<div class="hl">
+  <div class="hlogo">H</div>
+  <div class="ht">HZA Image Studio <span>V3 &mdash; Smart Prompt Engine</span></div>
+</div>
+<div class="hr">
+  <div class="hu" id="hUser">Select name</div>
+  <div class="hb">V3</div>
+  <div class="hd"></div>
+</div>
+</div>
+
+<div class="app" id="appBody">
+
+<!-- LEFT PANEL -->
+<div class="sb">
+
+  <!-- WHO -->
+  <div class="sec">
+    <div class="sl">Your Name</div>
+    <select class="ss" id="uName" onchange="document.getElementById('hUser').textContent=this.value||'Select name'">
+      <option value="">Select your name...</option>
+      <option>Hymie</option><option>Sheralyn</option><option>Kristina</option>
+      <option>Ahsan</option><option>Jahan</option><option>Asad</option>
+      <option>Sohaib</option><option>Myca</option><option>Faheem</option>
+      <option>Ren</option><option>Usman</option><option>Jade</option>
+      <option>Zeeshan</option><option>Adeela</option><option>Adil</option><option>Mubeen</option>
+    </select>
+  </div>
+
+  <div class="sec">
+    <div class="sl">Client Name</div>
+    <input class="inp" id="cName" type="text" placeholder="e.g. Myo Inositol brand, SkinLab...">
+  </div>
+
+  <hr class="div">
+
+  <!-- PRODUCT INFO — V3 KEY SECTION -->
+  <div class="sec">
+    <div class="sl">Product Info <span class="req-badge">Required in V3</span></div>
+    <input class="inp" id="prodName" type="text" placeholder="Product name (e.g. Myo-Inositol 2000mg Capsules)">
+    <select class="ss" id="prodCat">
+      <option value="">Select Amazon category...</option>
+      <option>Health & Household</option>
+      <option>Vitamins & Dietary Supplements</option>
+      <option>Beauty & Personal Care</option>
+      <option>Sports & Outdoors / Supplements</option>
+      <option>Grocery & Gourmet Food</option>
+      <option>Baby Products</option>
+      <option>Pet Supplies</option>
+      <option>Home & Kitchen</option>
+      <option>Electronics</option>
+      <option>Clothing & Apparel</option>
+      <option>Toys & Games</option>
+      <option>Office Products</option>
+      <option>Other</option>
+    </select>
+    <div class="ben-row">
+      <div class="ben-inp">
+        <div class="ben-num">1</div>
+        <input class="inp" id="ben1" type="text" placeholder="Key benefit or feature (e.g. 2000mg clinical dose)">
+      </div>
+      <div class="ben-inp">
+        <div class="ben-num">2</div>
+        <input class="inp" id="ben2" type="text" placeholder="Second benefit (e.g. hormone balance support)">
+      </div>
+      <div class="ben-inp">
+        <div class="ben-num">3</div>
+        <input class="inp" id="ben3" type="text" placeholder="Third benefit (e.g. 90-day supply, 3rd party tested)">
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>Why this matters:</strong> Claude uses your product info to build a detailed, Amazon-optimized Gemini prompt — the same way Pixii's backend works. Better product info = better images.
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- IMAGE TYPE -->
+  <div class="sec">
+    <div class="sl">Image Type</div>
+    <div class="cw" id="chips">
+      <div class="ch" data-p="main_image">🖼 Main Image</div>
+      <div class="ch" data-p="lifestyle">🌿 Lifestyle</div>
+      <div class="ch" data-p="infographic">📊 Infographic</div>
+      <div class="ch" data-p="comparison">⚖️ Comparison</div>
+      <div class="ch" data-p="before_after">✨ Before/After</div>
+      <div class="ch" data-p="aplus">🏆 A+ Content</div>
+      <div class="ch" data-p="banner">🎨 Banner</div>
+      <div class="ch" data-p="packaging">📦 Packaging</div>
+      <div class="ch" data-p="custom">⚙️ Custom</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- ASPECT RATIO -->
+  <div class="sec">
+    <div class="sl">Aspect Ratio</div>
+    <div class="arw" id="arRow">
+      <div class="arb on" data-r="1:1">1:1</div>
+      <div class="arb" data-r="4:3">4:3</div>
+      <div class="arb" data-r="3:4">3:4</div>
+      <div class="arb" data-r="16:9">16:9</div>
+      <div class="arb" data-r="9:16">9:16</div>
+    </div>
+    <div class="sl" style="margin-top:10px">A+ Formats</div>
+    <div class="arw" id="arRowAplus">
+      <div class="arb" data-r="16:9" data-label="A+ Desktop">A+ Desktop</div>
+      <div class="arb" data-r="4:3" data-label="A+ Mobile">A+ Mobile</div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- INSPIRATION IMAGE (OPTIONAL) -->
+  <div class="sec">
+    <div class="sl">Inspiration Image <span class="opt-badge">Optional</span></div>
+    <div class="uz uz-opt" id="inspoZone" onclick="document.getElementById('inspoIn').click()">
+      📸 Screenshot a competitor image you like from Amazon and upload it here — Claude will analyze its layout and replicate the structure for your product
+      <input type="file" id="inspoIn" accept="image/*">
+    </div>
+    <div class="upv" id="inspoPrev"></div>
+  </div>
+
+  <!-- PRODUCT IMAGE -->
+  <div class="sec">
+    <div class="sl">Your Product Photo <span class="req-badge">Required</span></div>
+    <div class="uz" id="prodZone" onclick="document.getElementById('prodIn').click()">
+      📎 Upload client's product photo (white/transparent background works best)
+      <input type="file" id="prodIn" accept="image/*">
+    </div>
+    <div class="upv" id="prodPrev"></div>
+  </div>
+
+  <!-- EXTRA NOTES -->
+  <div class="sec">
+    <div class="sl">Additional Notes <span class="opt-badge">Optional</span></div>
+    <textarea class="pb" id="pArea" placeholder="e.g. 'use green tones', 'emphasize the 2-pack', 'dark moody background', 'show product next to a glass of water'..."></textarea>
+  </div>
+
+  <!-- VARIATIONS -->
+  <div class="sec">
+    <div class="sl">Variations</div>
+    <div class="vc">
+      <div class="vcb" data-n="1">1</div>
+      <div class="vcb" data-n="2">2</div>
+      <div class="vcb on" data-n="3">3</div>
+      <div class="vcb" data-n="4">4</div>
+      <span class="vcl">images per run</span>
+    </div>
+  </div>
+
+  <!-- MODEL -->
+  <div class="sec">
+    <div class="sl">Model</div>
+    <div class="cw" id="modelPicker">
+      <div class="ch on" data-m="gemini-3.1-flash-image-preview" style="cursor:pointer">⚡ NB2 — Fast (default)</div>
+      <div class="ch" data-m="gemini-3-pro-image-preview" style="cursor:pointer">🔥 Pro — Max quality</div>
+    </div>
+  </div>
+
+  <button class="genb" id="genBtn" onclick="generate()">
+    <span class="gsp"></span>
+    <span id="genBtnText">✦ Generate Images</span>
+  </button>
+
+</div><!-- /sb -->
+
+<!-- RIGHT PANEL -->
+<div class="mn">
+  <div class="mt">
+    <div class="mtl">Output</div>
+    <div class="mbs">
+      <button class="ib" onclick="dlAll()" title="Download All">⬇</button>
+      <button class="ib" onclick="clrCanvas()" title="Clear">✕</button>
+    </div>
+  </div>
+
+  <div class="cv" id="cvArea">
+    <div class="es" id="emSt">
+      <div class="ei">🍌</div>
+      <h3>HZA Image Studio V3</h3>
+      <p>Claude builds the prompt. Gemini generates the image. All 9 Amazon image types supported.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Fill in Product Info — name, category, key benefits</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Pick your image type and upload the product photo</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Optionally upload a competitor screenshot as inspiration</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Hit Generate — Claude + Gemini do the rest</div></div>
+      </div>
+    </div>
+    <div class="gallery" id="gallery" style="display:none"></div>
+    <img id="mImg">
+    <div class="prg" id="prgO">
+      <div class="prt"><div class="prf" id="prgF"></div></div>
+      <div class="prtx" id="prgT">Starting...</div>
+      <div class="prg-sub" id="prgSub"></div>
+    </div>
+  </div>
+
+  <!-- GENERATED PROMPT -->
+  <div class="prompt-box" id="promptBox">
+    <strong>⚙ Claude-Generated Prompt (sent to Gemini)</strong>
+    <span id="promptText"></span>
+  </div>
+
+  <!-- INFOGRAPHIC NOTE -->
+  <div class="info-box" id="infoNote" style="display:none">
+    <strong>📝 About placeholder text:</strong> Infographics and callout images include visible labels like <em>[BENEFIT 1]</em> or <em>[KEY STAT]</em> — these are intentional markers. Add your real text in Canva, Photoshop, or Adobe Express before sending to the client.
+  </div>
+
+  <!-- EDIT BAR -->
+  <div class="eb">
+    <input class="ebi" id="edIn" placeholder="Edit the selected image... e.g. 'darker background', 'move product left', 'warmer lighting'" onkeydown="if(event.key==='Enter')editImg()">
+    <button class="ebs" id="edBtn" onclick="editImg()">Edit</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div>
+    <div class="sl">History</div>
+    <div class="hs" id="hist"></div>
+  </div>
+
+</div><!-- /mn -->
+</div><!-- /app -->
+
+<div class="tst" id="toast"></div>
+
+<script>
+const PROXY_URL = "/.netlify/functions/generate";
+const SMART_PROMPT_URL = "/.netlify/functions/smart-prompt";
+const TEAM_PASS = "hza2026";
+
+let model = "gemini-3.1-flash-image-preview";
+let ratio = "1:1";
+let imageType = "";
+let inspoImg = null;
+let prodImg = null;
+let numVariations = 3;
+let hist = [];
+let curUrl = null;
+let curImgB64 = null;
+let editHistory = [];
+let galleryImages = [];
+let selectedGalIdx = 0;
+let lastGeneratedPrompt = "";
+
+// ── AUTH ──
+function checkPass() {
+  const p = document.getElementById("gPass").value;
+  if (p === TEAM_PASS) {
+    document.getElementById("gate").classList.add("off");
+    document.getElementById("hdr").style.display = "flex";
+    document.getElementById("appBody").style.display = "grid";
+  } else {
+    document.getElementById("gErr").style.display = "block";
+  }
+}
+
+// ── TOAST ──
+function toast(msg, type = "ok") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "tst on " + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove("on"), 3500);
+}
+
+// ── ASPECT RATIO ──
+document.getElementById("arRow").addEventListener("click", e => {
+  const b = e.target.closest(".arb"); if (!b) return;
+  document.querySelectorAll(".arb").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); ratio = b.dataset.r;
+});
+document.getElementById("arRowAplus").addEventListener("click", e => {
+  const b = e.target.closest(".arb"); if (!b) return;
+  document.querySelectorAll(".arb").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); ratio = b.dataset.r;
+});
+
+// ── IMAGE TYPE ──
+document.getElementById("chips").addEventListener("click", e => {
+  const c = e.target.closest(".ch"); if (!c) return;
+  document.querySelectorAll("#chips .ch").forEach(x => x.classList.remove("on"));
+  c.classList.add("on"); imageType = c.dataset.p;
+  // Show infographic note for relevant types
+  const noteTypes = ["infographic","comparison","before_after","aplus","banner"];
+  document.getElementById("infoNote").style.display = noteTypes.includes(imageType) ? "block" : "none";
+});
+
+// ── MODEL PICKER ──
+document.getElementById("modelPicker").addEventListener("click", e => {
+  const c = e.target.closest(".ch"); if (!c) return;
+  document.querySelectorAll("#modelPicker .ch").forEach(x => x.classList.remove("on"));
+  c.classList.add("on"); model = c.dataset.m;
+});
+
+// ── VARIATIONS ──
+document.querySelectorAll(".vcb").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".vcb").forEach(x => x.classList.remove("on"));
+    b.classList.add("on"); numVariations = parseInt(b.dataset.n);
+  });
+});
+
+// ── INSPIRATION IMAGE ──
+const inspoIn = document.getElementById("inspoIn");
+inspoIn.addEventListener("change", () => {
+  if (inspoIn.files.length > 0) {
+    const f = inspoIn.files[0];
+    const r = new FileReader();
+    r.onload = e => { inspoImg = { data: e.target.result, b64: e.target.result.split(",")[1], mime: f.type }; renderInspo(); };
+    r.readAsDataURL(f);
+  }
+});
+const inspoZone = document.getElementById("inspoZone");
+inspoZone.addEventListener("dragover", e => { e.preventDefault(); inspoZone.style.borderColor = "var(--blu)"; });
+inspoZone.addEventListener("dragleave", () => { inspoZone.style.borderColor = ""; });
+inspoZone.addEventListener("drop", e => {
+  e.preventDefault(); inspoZone.style.borderColor = "";
+  if (e.dataTransfer.files.length > 0) {
+    const f = e.dataTransfer.files[0];
+    if (f.type.startsWith("image/")) {
+      const r = new FileReader();
+      r.onload = ev => { inspoImg = { data: ev.target.result, b64: ev.target.result.split(",")[1], mime: f.type }; renderInspo(); };
+      r.readAsDataURL(f);
+    }
+  }
+});
+function renderInspo() {
+  const c = document.getElementById("inspoPrev");
+  if (!inspoImg) { c.innerHTML = ""; return; }
+  c.innerHTML = `<div class="upw"><img src="${inspoImg.data}" class="upt"><button class="upx" onclick="inspoImg=null;renderInspo()">✕</button></div>`;
+}
+
+// ── PRODUCT IMAGE ──
+const prodIn = document.getElementById("prodIn");
+prodIn.addEventListener("change", () => {
+  if (prodIn.files.length > 0) {
+    const f = prodIn.files[0];
+    const r = new FileReader();
+    r.onload = e => { prodImg = { data: e.target.result, b64: e.target.result.split(",")[1], mime: f.type }; renderProd(); };
+    r.readAsDataURL(f);
+  }
+});
+const prodZone = document.getElementById("prodZone");
+prodZone.addEventListener("dragover", e => { e.preventDefault(); prodZone.style.borderColor = "var(--am)"; });
+prodZone.addEventListener("dragleave", () => { prodZone.style.borderColor = ""; });
+prodZone.addEventListener("drop", e => {
+  e.preventDefault(); prodZone.style.borderColor = "";
+  if (e.dataTransfer.files.length > 0) {
+    const f = e.dataTransfer.files[0];
+    if (f.type.startsWith("image/")) {
+      const r = new FileReader();
+      r.onload = ev => { prodImg = { data: ev.target.result, b64: ev.target.result.split(",")[1], mime: f.type }; renderProd(); };
+      r.readAsDataURL(f);
+    }
+  }
+});
+function renderProd() {
+  const c = document.getElementById("prodPrev");
+  if (!prodImg) { c.innerHTML = ""; return; }
+  c.innerHTML = `<div class="upw"><img src="${prodImg.data}" class="upt"><button class="upx" onclick="prodImg=null;renderProd()">✕</button></div>`;
+}
+
+// ── HELPERS ──
+function setProgress(pct, main, sub = "") {
+  document.getElementById("prgF").style.width = pct + "%";
+  document.getElementById("prgT").textContent = main;
+  document.getElementById("prgSub").textContent = sub;
+}
+
+function getImageSize() {
+  const btn = document.querySelector(".arb.on");
+  const label = btn ? btn.dataset.label : "";
+  return (label === "A+ Desktop" || label === "A+ Mobile") ? "2K" : "1K";
+}
+
+function getAplusLabel() {
+  const btn = document.querySelector(".arb.on");
+  return btn ? (btn.dataset.label || "") : "";
+}
+
+// ── BUILD SMART PROMPT via Claude ──
+async function buildSmartPrompt(blueprint, variationNum) {
+  const productName = document.getElementById("prodName").value.trim();
+  const category = document.getElementById("prodCat").value;
+  const benefits = [
+    document.getElementById("ben1").value.trim(),
+    document.getElementById("ben2").value.trim(),
+    document.getElementById("ben3").value.trim(),
+  ].filter(Boolean);
+  const additionalNotes = document.getElementById("pArea").value.trim();
+
+  const resp = await fetch(SMART_PROMPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productName, category, benefits, imageType, blueprint, additionalNotes, variationNum }),
+  });
+  if (!resp.ok) throw new Error("Smart prompt failed");
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error);
+  return data.prompt;
+}
+
+// ── MAIN GENERATE ──
+async function generate() {
+  const user = document.getElementById("uName").value;
+  if (!user) { toast("Select your name first", "err"); return; }
+  if (!prodImg) { toast("Upload the product photo", "err"); return; }
+  if (!imageType) { toast("Select an image type", "err"); return; }
+
+  const btn = document.getElementById("genBtn");
+  const ov = document.getElementById("prgO");
+  const gallery = document.getElementById("gallery");
+  const emSt = document.getElementById("emSt");
+
+  btn.classList.add("ld"); btn.disabled = true;
+  ov.classList.add("on");
+  emSt.style.display = "none";
+  gallery.style.display = "none";
+  gallery.innerHTML = "";
+  galleryImages = [];
+  document.getElementById("mImg").classList.remove("v");
+  document.getElementById("promptBox").classList.remove("show");
+
+  let blueprint = null;
+
+  try {
+    // STEP 1: Deconstruct inspiration image if provided
+    if (inspoImg) {
+      setProgress(8, "Analyzing competitor image...", "Extracting layout blueprint");
+      const deconPrompts = {
+        main_image: "Analyze this Amazon main product image. Extract: background type and color (hex), product placement (position, % of frame), any badge or trust element positions, lighting direction. Output ONLY clean JSON.",
+        lifestyle: "Analyze this Amazon lifestyle image. Extract: scene/mood, lighting style and color temperature, product integration method, callout card styles (shape, color, position), color palette (hex), emotional tone. Output ONLY clean JSON.",
+        infographic: "Analyze this Amazon infographic. Extract: layout pattern, background colors (hex), product placement, number and position of feature callouts, icon style, text hierarchy zones, badge types and positions. Output ONLY clean JSON.",
+        comparison: "Analyze this Amazon comparison chart. Extract: grid structure (columns, rows), header styling, how the hero column is highlighted (border, color, glow), checkmark/X icon styles, color palette (hex). Output ONLY clean JSON.",
+        before_after: "Analyze this Amazon before/after image. Extract: split layout type, before-section treatment (colors, desaturation), after-section treatment (vibrancy, warmth), divider style, result callout positions, color contrast palette (hex). Output ONLY clean JSON.",
+        aplus: "Analyze this Amazon A+ Content image in detail. Extract: overall layout type, each section with background and content description, product placement details, color palette (hex), decorative elements, text zone positions. Output ONLY clean JSON.",
+        banner: "Analyze this Amazon storefront banner. Extract: composition layout, background treatment, product placement, headline zone position, color palette (hex), visual hierarchy flow. Output ONLY clean JSON.",
+        packaging: "Analyze this product packaging mockup. Extract: angle and perspective, lighting direction and shadow style, background treatment, visible surface areas, color palette (hex), any 3D rendering effects. Output ONLY clean JSON.",
+        custom: "Analyze this Amazon product image in full detail. Extract: layout, composition, text hierarchy zones, color palette (hex), badge positions, background style, product positioning. Output ONLY clean JSON.",
+      };
+      const deconPrompt = deconPrompts[imageType] || deconPrompts.custom;
+      const deconResp = await fetch(PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: deconPrompt,
+          imageData: inspoImg.b64,
+          mimeType: inspoImg.mime,
+          model,
+          textOnly: true,
+          userName: user,
+          clientName: document.getElementById("cName").value || "unknown",
+        }),
+      });
+      if (!deconResp.ok) throw new Error("Blueprint analysis failed");
+      const deconData = await deconResp.json();
+      blueprint = deconData.text || null;
+    }
+
+    setProgress(25, "Building optimized prompt...", "Claude is writing your Gemini prompt");
+
+    // STEP 2 & 3: For each variation, build smart prompt + generate image
+    for (let i = 0; i < numVariations; i++) {
+      const varNum = i + 1;
+      setProgress(25 + (i / numVariations) * 65, `Generating variation ${varNum} of ${numVariations}...`, `${i} of ${numVariations} complete`);
+
+      // Build smart prompt via Claude
+      let genPrompt;
+      try {
+        genPrompt = await buildSmartPrompt(blueprint, varNum);
+        if (i === 0) {
+          lastGeneratedPrompt = genPrompt;
+          document.getElementById("promptText").textContent = genPrompt;
+          document.getElementById("promptBox").classList.add("show");
+        }
+      } catch (e) {
+        // Fallback prompt if Claude call fails
+        genPrompt = `Generate a professional Amazon ${imageType.replace(/_/g, " ")} for the attached product image. High quality, production-ready, photorealistic. Amazon-compliant.`;
+        if (i === 0) toast("Smart prompt builder unavailable — using fallback prompt", "inf");
+      }
+
+      // Add A+ format override if needed
+      const aplusLabel = getAplusLabel();
+      if (aplusLabel === "A+ Desktop") genPrompt += " Format as a wide horizontal banner (16:9 aspect ratio) for Amazon A+ Desktop Content module.";
+      else if (aplusLabel === "A+ Mobile") genPrompt += " Format as a compact square (4:3 aspect ratio) for Amazon A+ Mobile Content module.";
+
+      // Generate image
+      try {
+        const resp = await fetch(PROXY_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: genPrompt,
+            imageData: prodImg.b64,
+            mimeType: prodImg.mime,
+            aspectRatio: ratio,
+            model,
+            userName: user,
+            clientName: document.getElementById("cName").value || "unknown",
+            imageSize: getImageSize(),
+          }),
+        });
+        if (!resp.ok) { console.error(`Variation ${varNum} failed`); continue; }
+        const data = await resp.json();
+        if (data.imageData) {
+          const src = "data:" + (data.mimeType || "image/png") + ";base64," + data.imageData;
+          galleryImages.push({ src, b64: data.imageData, mime: data.mimeType || "image/png" });
+        }
+      } catch (e) {
+        console.error(`Variation ${varNum} error:`, e);
+      }
+    }
+
+    setProgress(100, "Complete!", galleryImages.length + " image" + (galleryImages.length !== 1 ? "s" : "") + " generated");
+
+    setTimeout(() => {
+      ov.classList.remove("on");
+      document.getElementById("prgF").style.width = "0%";
+
+      if (galleryImages.length === 0) {
+        toast("No images generated — check product photo quality or try a different type", "err");
+        emSt.style.display = "";
+      } else if (galleryImages.length === 1) {
+        const img = document.getElementById("mImg");
+        img.src = galleryImages[0].src; curUrl = galleryImages[0].src;
+        curImgB64 = galleryImages[0].b64;
+        editHistory = [{ b64: curImgB64, mime: galleryImages[0].mime, prompt: lastGeneratedPrompt }];
+        img.classList.add("v");
+        addHist(galleryImages[0].src);
+        toast("Image generated!", "ok");
+      } else {
+        gallery.style.display = "grid";
+        galleryImages.forEach((g, i) => {
+          const div = document.createElement("div");
+          div.className = "gal-item" + (i === 0 ? " selected" : "");
+          div.innerHTML = `<div class="gal-num">${i + 1}</div><img src="${g.src}"><button class="gal-dl" onclick="event.stopPropagation();dlOne(${i})" title="Download">⬇</button>`;
+          div.onclick = () => selectGal(i);
+          gallery.appendChild(div);
+        });
+        selectGal(0);
+        galleryImages.forEach(g => addHist(g.src));
+        toast(galleryImages.length + " variations generated!", "ok");
+      }
+    }, 500);
+
+  } catch (e) {
+    ov.classList.remove("on");
+    document.getElementById("prgF").style.width = "0%";
+    toast("Error: " + e.message, "err");
+    emSt.style.display = "";
+  }
+
+  btn.classList.remove("ld"); btn.disabled = false;
+}
+
+function selectGal(idx) {
+  selectedGalIdx = idx;
+  document.querySelectorAll(".gal-item").forEach((el, i) => el.classList.toggle("selected", i === idx));
+  curUrl = galleryImages[idx].src;
+  curImgB64 = galleryImages[idx].b64;
+  editHistory = [{ b64: curImgB64, mime: galleryImages[idx].mime, prompt: lastGeneratedPrompt }];
+}
+
+// ── EDIT ──
+async function editImg() {
+  const editText = document.getElementById("edIn").value.trim();
+  if (!editText) { toast("Type an edit instruction", "err"); return; }
+  if (!curImgB64) { toast("Generate an image first", "err"); return; }
+
+  const btn = document.getElementById("edBtn");
+  const ov = document.getElementById("prgO");
+  btn.disabled = true;
+  ov.classList.add("on");
+  setProgress(0, "Applying edit...", "");
+
+  let prog = 0;
+  const pi = setInterval(() => {
+    prog = Math.min(prog + Math.random() * 12, 92);
+    document.getElementById("prgF").style.width = prog + "%";
+  }, 500);
+
+  try {
+    const lastEdit = editHistory[editHistory.length - 1];
+    const resp = await fetch(PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt: editText,
+        imageData: lastEdit.b64,
+        mimeType: lastEdit.mime || "image/png",
+        model,
+        userName: document.getElementById("uName").value || "unknown",
+        clientName: document.getElementById("cName").value || "unknown",
+        imageSize: getImageSize(),
+      }),
+    });
+    clearInterval(pi);
+    if (!resp.ok) throw new Error("Edit failed");
+    const data = await resp.json();
+    if (!data.imageData) throw new Error(data.error || "No image returned");
+
+    const src = "data:" + (data.mimeType || "image/png") + ";base64," + data.imageData;
+    curImgB64 = data.imageData;
+    curUrl = src;
+    editHistory.push({ b64: data.imageData, mime: data.mimeType || "image/png", prompt: editText });
+
+    setProgress(100, "Edit applied!", "");
+    setTimeout(() => {
+      ov.classList.remove("on");
+      document.getElementById("prgF").style.width = "0%";
+      const img = document.getElementById("mImg");
+      img.src = src; img.classList.add("v");
+      if (galleryImages.length === 0) { curUrl = src; }
+      addHist(src);
+      toast("Edit applied!", "ok");
+      document.getElementById("edIn").value = "";
+    }, 400);
+  } catch (e) {
+    clearInterval(pi);
+    ov.classList.remove("on");
+    document.getElementById("prgF").style.width = "0%";
+    toast("Edit error: " + e.message, "err");
+  }
+  btn.disabled = false;
+}
+
+// ── HISTORY ──
+function addHist(src) {
+  hist.unshift(src);
+  if (hist.length > 12) hist.pop();
+  const c = document.getElementById("hist");
+  c.innerHTML = "";
+  hist.forEach((s, i) => {
+    const d = document.createElement("div");
+    d.className = "hi" + (i === 0 ? " on" : "");
+    d.innerHTML = `<img src="${s}">`;
+    d.onclick = () => {
+      curUrl = s; document.getElementById("mImg").src = s;
+      document.getElementById("mImg").classList.add("v");
+      document.querySelectorAll(".hi").forEach((x, j) => x.classList.toggle("on", j === i));
+    };
+    c.appendChild(d);
+  });
+}
+
+// ── DOWNLOAD ──
+function dlOne(idx) {
+  const g = galleryImages[idx];
+  if (!g) return;
+  const a = document.createElement("a");
+  a.href = g.src;
+  const client = document.getElementById("cName").value || "image";
+  const type = imageType || "output";
+  a.download = `HZA-${client}-${type}-${idx + 1}.png`;
+  a.click();
+}
+function dlAll() {
+  if (galleryImages.length === 0 && !curUrl) { toast("Nothing to download", "err"); return; }
+  if (galleryImages.length > 0) {
+    galleryImages.forEach((_, i) => dlOne(i));
+  } else if (curUrl) {
+    const a = document.createElement("a");
+    a.href = curUrl;
+    a.download = `HZA-${document.getElementById("cName").value || "image"}.png`;
+    a.click();
+  }
+}
+function clrCanvas() {
+  document.getElementById("gallery").style.display = "none";
+  document.getElementById("gallery").innerHTML = "";
+  document.getElementById("mImg").classList.remove("v");
+  document.getElementById("emSt").style.display = "";
+  document.getElementById("promptBox").classList.remove("show");
+  galleryImages = []; curImgB64 = null; curUrl = null; editHistory = [];
+}
+</script>
+</body>
+</html>
